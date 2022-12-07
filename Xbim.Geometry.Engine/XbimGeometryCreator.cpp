@@ -190,7 +190,7 @@ namespace Xbim
 				}
 				else if (dynamic_cast<IIfcManifoldSolidBrep^>(geomRep))
 				{
-					XbimCompound^ comp = gcnew XbimCompound((IIfcManifoldSolidBrep^)geomRep, logger);
+					XbimCompound^ comp = gcnew XbimCompound((IIfcManifoldSolidBrep^)geomRep, true, logger);
 					if (objectLocation != nullptr) comp->Move(objectLocation);
 					return comp;
 				}

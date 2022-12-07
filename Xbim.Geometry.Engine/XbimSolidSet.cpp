@@ -125,13 +125,13 @@ namespace Xbim
 
 		XbimSolidSet::XbimSolidSet(IIfcManifoldSolidBrep^ solid, ILogger^ logger)
 		{
-			XbimCompound^ comp = gcnew XbimCompound(solid, logger);
+			XbimCompound^ comp = gcnew XbimCompound(solid, true, logger);
 			Init(comp, solid, logger);
 
 		}
 		XbimSolidSet::XbimSolidSet(IIfcFacetedBrep^ solid, ILogger^ logger)
 		{
-			XbimCompound^ comp = gcnew XbimCompound(solid, logger);
+			XbimCompound^ comp = gcnew XbimCompound(solid, true, logger);
 			Init(comp, solid, logger);
 		}
 
@@ -1110,7 +1110,7 @@ namespace Xbim
 			}
 			else if (ms != nullptr)
 			{
-				XbimCompound^ comp = gcnew XbimCompound(ms, logger);
+				XbimCompound^ comp = gcnew XbimCompound(ms, false, logger);
 				Init(comp, ms, logger);
 			}
 			else if (hs != nullptr)

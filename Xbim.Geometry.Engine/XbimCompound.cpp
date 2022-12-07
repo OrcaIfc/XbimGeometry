@@ -222,15 +222,16 @@ namespace Xbim
 			Init(fbsm, logger);
 		}
 
-		XbimCompound::XbimCompound(IIfcManifoldSolidBrep^ solid, ILogger^ logger)
+		XbimCompound::XbimCompound(IIfcManifoldSolidBrep^ solid, bool sewFaces, ILogger^ logger)
 		{
 			_sewingTolerance = solid->Model->ModelFactors->Precision;
-			Init(solid, logger);
+			Init(solid, sewFaces, logger);
 		}
-		XbimCompound::XbimCompound(IIfcFacetedBrep^ solid, ILogger^ logger)
+		
+		XbimCompound::XbimCompound(IIfcFacetedBrep^ solid, bool sewFaces, ILogger^ logger)
 		{
 			_sewingTolerance = solid->Model->ModelFactors->Precision;
-			Init(solid, logger);
+			Init(solid, sewFaces, logger);
 		}
 
 		XbimCompound::XbimCompound(IIfcFacetedBrepWithVoids^ solid, ILogger^ logger)
@@ -435,10 +436,10 @@ namespace Xbim
 		}
 
 
-		void XbimCompound::Init(IIfcManifoldSolidBrep^ solid, ILogger^ logger)
+		void XbimCompound::Init(IIfcManifoldSolidBrep^ solid, bool sewFaces, ILogger^ logger)
 		{
 			IIfcFacetedBrep^ facetedBrep = dynamic_cast<IIfcFacetedBrep^>(solid);
-			if (facetedBrep != nullptr) return Init(facetedBrep, logger);
+			if (facetedBrep != nullptr) return Init(facetedBrep, sewFaces, logger);
 
 			IIfcAdvancedBrep^ advancedBrep = dynamic_cast<IIfcAdvancedBrep^>(solid);
 			if (advancedBrep != nullptr) return Init(advancedBrep, logger);
@@ -507,7 +508,7 @@ namespace Xbim
 			}
 		}
 
-		void XbimCompound::Init(IIfcFacetedBrep^ solid, ILogger^ logger)
+		void XbimCompound::Init(IIfcFacetedBrep^ solid, bool sewFaces, ILogger^ logger)
 		{
 			if (solid->Outer->CfsFaces->Count < 4) // if we have 3 or less planar faces it cannot form a valid solid
 			{
@@ -517,7 +518,9 @@ namespace Xbim
 
 			IIfcFacetedBrepWithVoids^ facetedBrepWithVoids = dynamic_cast<IIfcFacetedBrepWithVoids^>(solid);
 			if (facetedBrepWithVoids != nullptr) return Init(facetedBrepWithVoids, logger);
-			Init(solid->Outer, logger);
+			
+			if (sewFaces) InitSewn(solid->Outer->CfsFaces, solid->Outer, logger);
+			else Init(solid->Outer, logger);
 		}
 
 		void XbimCompound::Init(IIfcAdvancedBrepWithVoids^ brepWithVoids, ILogger^ logger)
@@ -1614,16 +1617,72 @@ namespace Xbim
 			}
 		}
 
+		// Former init for faces with implicit sewing functionality
+		void XbimCompound::InitSewn(IEnumerable<IIfcFace^>^ ifcFaces, IIfcRepresentationItem^ theItem, ILogger^ logger)
+		{
+			_sewingTolerance = theItem->Model->ModelFactors->Precision;
+			BRep_Builder builder;
+			
+			if (Enumerable::Count(ifcFaces) == 1)
+			{
+				TopoDS_Shell shell;
+				builder.MakeShell(shell);
+				XbimFace^ face = gcnew XbimFace(Enumerable::First(ifcFaces), logger);
+				builder.Add(shell, face);
+				pCompound = new TopoDS_Compound();
+				builder.MakeCompound(*pCompound);
+				builder.Add(*pCompound, shell);
+			}
+			else
+			{
+				BRepBuilderAPI_Sewing seamstress(_sewingTolerance);
+				int allFaces = 0;
+				for each (IIfcFace ^ ifcFace in ifcFaces)
+				{
+					XbimFace^ face = gcnew XbimFace(ifcFace, logger);
+					seamstress.Add(face);
+					allFaces++;
+				}
+				seamstress.Perform();
 
+				TopoDS_Shape result = seamstress.SewedShape();
+				TopoDS_Compound unifiedCompound;
+				builder.MakeCompound(unifiedCompound);
+				//remove unnecesary faces, normally caused by triangulation, this improves boolean quality
+				if (allFaces > 6 && allFaces < MaxFacesToSew) //six is a cuboid no point in simplify that
+				{
+					ShapeUpgrade_UnifySameDomain unifier(result);
+					unifier.SetAngularTolerance(0.00174533); //1 tenth of a degree
+					unifier.SetLinearTolerance(_sewingTolerance);
 
+					try
+					{
+						//sometimes unifier crashes
+						unifier.Build();
+						builder.Add(unifiedCompound, unifier.Shape());
 
+					}
+					catch (...) //any failure
+					{
+						//default to what we had
+						builder.Add(unifiedCompound, result);
+					}
+				}
+				else
+				{
+					builder.Add(unifiedCompound, result);
+				}
+
+				pCompound = new TopoDS_Compound();
+				*pCompound = unifiedCompound;
+			}
+
+			_isSewn = true;
+		}
 
 #pragma endregion
 
-
 #pragma region Helpers
-
-
 
 		XbimFace^ XbimCompound::BuildFace(List<Tuple<XbimWire^, IIfcPolyLoop^, bool>^>^ wires, IIfcFace^ owningFace, ILogger^ logger)
 		{

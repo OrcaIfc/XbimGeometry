@@ -37,10 +37,11 @@ namespace Xbim
 			void Init(IIfcConnectedFaceSet^ faceSet,  ILogger^ logger);
 			TopoDS_Shape InitFaces(IEnumerable<IIfcFace^>^ faces,IIfcRepresentationItem^ theItem, ILogger^ logger);
 			TopoDS_Shape InitAdvancedFaces(IEnumerable<IIfcFace^>^ faces, ILogger^ logger);
+			void InitSewn(IEnumerable<IIfcFace^>^ ifcFaces, IIfcRepresentationItem^ theItem, ILogger^ logger);
 			void Init(IIfcShellBasedSurfaceModel^ sbsm, ILogger^ logger);
 			void Init(IIfcFaceBasedSurfaceModel^ fbsm, ILogger^ logger);
-			void Init(IIfcManifoldSolidBrep^ solid, ILogger^ logger);
-			void Init(IIfcFacetedBrep^ solid, ILogger^ logger);
+			void Init(IIfcManifoldSolidBrep^ solid, bool sewFaces, ILogger^ logger);
+			void Init(IIfcFacetedBrep^ solid, bool sewFaces, ILogger^ logger);
 			void Init(IIfcFacetedBrepWithVoids^ solid, ILogger^ logger);
 			void Init(IIfcAdvancedBrep^ solid, ILogger^ logger);
 			void Init(IIfcAdvancedBrepWithVoids^ solid, ILogger^ logger);
@@ -62,8 +63,8 @@ namespace Xbim
 			XbimCompound(IIfcConnectedFaceSet^ faceSet, ILogger^ logger);
 			XbimCompound(IIfcShellBasedSurfaceModel^ sbsm, ILogger^ logger);
 			XbimCompound(IIfcFaceBasedSurfaceModel^ fbsm, ILogger^ logger);
-			XbimCompound(IIfcManifoldSolidBrep^ solid, ILogger^ logger);
-			XbimCompound(IIfcFacetedBrep^ solid, ILogger^ logger);
+			XbimCompound(IIfcManifoldSolidBrep^ solid, bool sewFaces, ILogger^ logger);
+			XbimCompound(IIfcFacetedBrep^ solid, bool sewFaces, ILogger^ logger);
 			XbimCompound(IIfcFacetedBrepWithVoids^ solid, ILogger^ logger);
 			XbimCompound(IIfcAdvancedBrep^ solid, ILogger^ logger);
 			XbimCompound(IIfcAdvancedBrepWithVoids^ solid, ILogger^ logger);

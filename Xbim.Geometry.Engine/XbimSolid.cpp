@@ -376,7 +376,7 @@ namespace Xbim
 
 		void XbimSolid::Init(IIfcManifoldSolidBrep^ bRep, ILogger^ logger)
 		{
-			XbimCompound^ comp = gcnew XbimCompound(bRep, logger);
+			XbimCompound^ comp = gcnew XbimCompound(bRep, true, logger);
 			if (comp->IsValid)
 			{
 				if (comp->Solids->Count == 1) //we have one solid just return it and ignore extraneous faces

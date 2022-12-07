@@ -56,6 +56,7 @@ namespace Xbim
 			void Init(IIfcCylindricalSurface ^ surface, ILogger^ logger);
 			void Init(double x, double y, double tolerance, ILogger^ logger); 
 			void Init(IIfcFace^ face, ILogger^ logger, bool userVertexMap,  TopTools_DataMapOfIntegerShape& vertexMap);
+			void Init(IIfcFace^ face, ILogger^ logger);
 			static bool AreCollinear(const gp_Pnt& prePoint, const gp_Pnt& midPoint, const gp_Pnt& nextPoint);
 		public:
 			
@@ -134,6 +135,7 @@ namespace Xbim
 			XbimFace(double x, double y, double tolerance, ILogger^ logger);
 			// todo: 2021: never used in the internal code... I think it could be obsoleted
 			XbimFace(IIfcFace ^ face, ILogger^ logger, bool useVertexMap, TopTools_DataMapOfIntegerShape & vertexMap);
+			XbimFace(IIfcFace ^ face, ILogger^ logger);
 			
 #pragma endregion
 
