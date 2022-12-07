@@ -7,9 +7,9 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>Xbim.Geometry.Engine.Interop</PackageId>
 		<PackageIcon>xbim-toolkit-icon.png</PackageIcon>
-		<Version>5.1.445.80</Version>
-		<AssemblyVersion>5.1.445.80</AssemblyVersion>
-		<FileVersion>5.1.445.80</FileVersion>
+		<Version>5.1.44582</Version>
+		<AssemblyVersion>5.1.445.82</AssemblyVersion>
+		<FileVersion>5.1.445.82</FileVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Include="..\Xbim.Geometry.Engine.Interop.targets">
