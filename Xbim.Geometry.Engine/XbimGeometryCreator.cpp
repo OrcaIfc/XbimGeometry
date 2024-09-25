@@ -961,6 +961,35 @@ namespace Xbim
 				xShape->WriteTriangulation(bw, tolerance, deflection, angle);
 				return;
 			}
+
+			/// START
+	        /// NEW CODE -> workaround for the problem of the walls not being displayed
+	        XbimSolidSet^ xSolidSet = dynamic_cast<XbimSolidSet^>(shape);
+	        if (xSolidSet != nullptr)
+	        {
+		        // create an XBimCompound out of the XBimSolidSet
+		        TopoDS_Compound compound;
+		        BRep_Builder b;
+		        b.MakeCompound(compound);
+
+		        for each (IXbimSolid^ solid in xSolidSet)
+		        {
+			        if (!solid->IsValid)
+			        {
+				        continue;
+			        }
+
+			        XbimSolid^ solid2 = dynamic_cast<XbimSolid^>(solid);
+			        if (solid2 != nullptr) {
+				        b.Add(compound, solid2);
+				        //GC::KeepAlive(solid);
+				        XbimCompound^ compound2 = gcnew XbimCompound(compound, true, tolerance);
+				        compound2->WriteTriangulation(bw, tolerance, deflection, angle);
+			        }
+		        }
+	        }
+	        /// END
+	        /// NEW CODE
 		}
 
 

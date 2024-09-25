@@ -6,6 +6,8 @@
     <AssemblyOriginatorKeyFile>..\XbimOpenSourceKeyFile.snk</AssemblyOriginatorKeyFile>
     <RuntimeIdentifier>win7-x86</RuntimeIdentifier>
     <LangVersion>8.0</LangVersion>
+    <Version>5.1.445.83</Version>
+    <AssemblyVersion>5.1.445.83</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>

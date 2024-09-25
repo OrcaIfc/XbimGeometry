@@ -8,9 +8,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
     <PackageIcon>xbim-toolkit-icon.png</PackageIcon>
-    <Version>5.1.44582</Version>
-    <AssemblyVersion>5.1.445.82</AssemblyVersion>
-    <FileVersion>5.1.445.82</FileVersion>
+    <Version>5.1.44583</Version>
+    <AssemblyVersion>5.1.445.83</AssemblyVersion>
+    <FileVersion>5.1.445.83</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
